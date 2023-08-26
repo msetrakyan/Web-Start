@@ -48,12 +48,27 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-    public boolean register(User user) {
+    @Override
+    public void create(User user) {
+        try {
+            connection.setAutoCommit(false);
 
-        return false;
+            userRepository.create(user);
+
+            connection.commit();
+
+            connection.setAutoCommit(true);
+
+        } catch (Throwable e) {
+            System.out.println(e.getMessage());
+            try {
+                connection.rollback();
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
     }
-
-
 
     public boolean deleteAll() {
         try {
